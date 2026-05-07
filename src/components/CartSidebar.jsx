@@ -1,15 +1,18 @@
 import React from 'react';
 import '../styles/CartSidebar.css';
+import { useCart } from '../context/CartContext';
 
-function CartSidebar({ isOpen, onClose, cart = [], onUpdateQuantity, onRemoveItem }) {
+function CartSidebar() {
+  const { cart = [], isCartOpen, toggleCart, updateQuantity, removeFromCart } = useCart();
+
   const calculateTotal = () =>
     cart.reduce((total, item) => total + (Number(item.price) * (item.quantity || 0)), 0);
 
   return (
-    <div className={`cart-sidebar ${isOpen ? 'open' : ''}`} role="dialog" aria-hidden={!isOpen}>
+    <div className={`cart-sidebar ${isCartOpen ? 'open' : ''}`} role="dialog" aria-hidden={!isCartOpen}>
       <div className="cart-header">
         <h2>Your Cart</h2>
-        <button className="close-btn" onClick={onClose} aria-label="Close cart">✕</button>
+        <button className="close-btn" onClick={toggleCart} aria-label="Close cart">✕</button>
       </div>
 
       <div className="cart-items">
@@ -28,7 +31,7 @@ function CartSidebar({ isOpen, onClose, cart = [], onUpdateQuantity, onRemoveIte
               <div className="cart-item-quantity">
                 <button
                   className="quantity-btn"
-                  onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                  onClick={() => updateQuantity(item.id, (item.quantity || 0) - 1)}
                   aria-label="Decrease quantity"
                 >
                   −
@@ -36,14 +39,14 @@ function CartSidebar({ isOpen, onClose, cart = [], onUpdateQuantity, onRemoveIte
                 <span className="quantity-display">{item.quantity}</span>
                 <button
                   className="quantity-btn"
-                  onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                  onClick={() => updateQuantity(item.id, (item.quantity || 0) + 1)}
                   aria-label="Increase quantity"
                 >
                   +
                 </button>
               </div>
 
-              <button className="remove-btn" onClick={() => onRemoveItem(item.id)} aria-label="Remove item">✕</button>
+              <button className="remove-btn" onClick={() => removeFromCart(item.id)} aria-label="Remove item">✕</button>
             </div>
           ))
         )}
